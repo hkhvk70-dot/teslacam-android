@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<title>哨兵 · 录像</title>
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--secondary:#f2f2f7;--text:#17171a;--muted:#74747a;--line:rgba(60,60,67,.12);--blue:#007aff;--bluewash:rgba(0,122,255,.09);--green:#258144;--greenwash:rgba(52,199,89,.12);--amber:#a46b00;--amberwash:rgba(255,159,10,.12);--radius:22px;color-scheme:light dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--secondary:#2c2c2e;--text:#f5f5f7;--muted:#a0a0a8;--line:rgba(235,235,245,.12);--blue:#0a84ff;--bluewash:rgba(10,132,255,.16);--green:#6cdb8c;--greenwash:rgba(48,209,88,.14);--amber:#ffbd50;--amberwash:rgba(255,159,10,.14)}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}button:disabled{opacity:.42;cursor:default}button:focus-visible{outline:3px solid var(--blue);outline-offset:3px}button:active:not(:disabled){opacity:.7}[hidden]{display:none!important}.app{max-width:1000px;margin:auto;padding:calc(env(safe-area-inset-top) + 22px) 20px calc(env(safe-area-inset-bottom) + 30px)}.topline,.heading-row,.section-head,.capture,.summary,.event-top,.statusline{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:650;letter-spacing:.06em;color:var(--muted)}.brand svg{width:19px;height:21px}.connection{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);white-space:nowrap}.dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}.connection[data-state=ready] .dot{background:var(--green)}.connection[data-state=error] .dot{background:var(--amber)}h1{font-size:34px;line-height:1.12;letter-spacing:-.035em;margin:18px 0 6px;font-weight:750}h2{font-size:20px;line-height:1.3;letter-spacing:-.02em;margin:0}p{margin:0}.subtitle{font-size:14px;color:var(--muted)}.segmented{display:flex;background:var(--secondary);border-radius:12px;padding:3px;margin:24px 0 22px;gap:3px}.segmented button{flex:1;min-height:44px;background:none;border:0;border-radius:9px;font-weight:600;font-size:15px}.segmented button[aria-selected=true]{background:var(--card);box-shadow:0 1px 5px rgba(0,0,0,.09)}.section-head{margin-bottom:13px}.section-head .sub{font-size:12px;color:var(--muted);margin-top:3px}.text-button{border:0;background:none;color:var(--blue);min-height:44px;padding:0 4px;font-size:14px;font-weight:600;white-space:nowrap}.card{background:var(--card);border-radius:var(--radius);overflow:hidden}.stage{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.02)}.video-wrap{position:relative;background:#101013;min-height:180px;aspect-ratio:16/9;isolation:isolate}video{display:block;width:100%;height:100%;aspect-ratio:16/9;background:#101013;object-fit:contain}.quad-labels{pointer-events:none;position:absolute;inset:10px 10px 44px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;z-index:1}.quad-labels span{justify-self:start;align-self:start;border-radius:5px;padding:2px 6px;font-size:10px;line-height:16px;font-weight:600;background:rgba(0,0,0,.5);color:#fff}.quad-labels span:nth-child(2n){justify-self:end}.quad-labels span:nth-child(n+3){align-self:end}.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;padding:24px;color:#b8b8bf;pointer-events:none;text-align:center;background:#101013}.placeholder svg{width:36px;height:36px;opacity:.6}.placeholder strong{font-weight:500;font-size:14px;color:#e5e5ea}.placeholder small{font-size:12px;max-width:270px}.capture{padding:15px 16px 12px;align-items:flex-start}.eyebrow{font-size:11px;color:var(--muted);margin-bottom:3px}.capture strong{font-size:15px;font-variant-numeric:tabular-nums;font-weight:650}.delay{text-align:right;font-size:12px;color:var(--muted);padding-top:3px;white-space:nowrap}.delay.stale{color:var(--amber)}.statusline{min-height:48px;margin:0 16px;padding:10px 0 12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);align-items:flex-start}.status-copy{display:flex;gap:8px;align-items:flex-start;flex:1}.spinner{flex:0 0 auto;width:13px;height:13px;margin-top:2px;border:1.5px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}.statusline[data-tone=error]{color:var(--amber)}.retry{background:none;color:var(--blue);font-size:12px;font-weight:650;border:0;padding:0 0 0 8px;margin-top:-10px;margin-bottom:-10px;min-height:44px}.controls{padding:17px 16px 14px}.control-title{font-size:12px;color:var(--muted);margin-bottom:9px}.pills{display:flex;gap:6px;overflow:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 1px 4px}.pills::-webkit-scrollbar{display:none}.pill{flex:0 0 auto;min-height:44px;padding:8px 14px;border:0;border-radius:11px;background:var(--secondary);font-size:14px;white-space:nowrap}.pill[aria-pressed=true]{background:var(--bluewash);color:var(--blue);font-weight:650}.pill.small{font-size:13px;padding-inline:12px}.space{height:16px}.minute-row{padding:0 1px}.minutes{margin-top:8px}.minute-row .pill{font-variant-numeric:tabular-nums;min-width:65px}.follow-icon{font-size:9px;vertical-align:1px;margin-right:5px}.notice{background:var(--bluewash);color:var(--blue);border-radius:12px;padding:11px 14px;margin-top:12px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:10px}.notice button{font-size:13px;font-weight:650;border:0;background:none;color:inherit;min-height:44px;margin:-11px -4px -11px 0;padding:0 4px;white-space:nowrap}.help{font-size:12px;line-height:1.6;color:var(--muted);margin:14px 3px 0}.summary{margin:3px 2px 15px;align-items:flex-start}.summary strong{font-size:13px;font-weight:600}.summary span{color:var(--muted);font-size:12px}.filters{margin-bottom:15px}.event-list{display:grid;gap:12px}.event{display:flex;gap:14px;padding:14px;border:0;width:100%;text-align:left;border-radius:18px;background:var(--card)}.thumb{flex:0 0 96px;width:96px;height:76px;background:var(--secondary);border-radius:11px;overflow:hidden;display:grid;place-items:center;color:var(--muted);position:relative}.thumb img{width:100%;height:100%;object-fit:cover}.thumb svg{width:25px;height:25px;opacity:.6}.event-copy{flex:1;min-width:0}.event-top{justify-content:flex-start;gap:7px;margin-bottom:5px}.event-type{font-size:11px;font-weight:600;color:var(--muted)}.event strong{font-size:17px;line-height:1.3;font-weight:650;font-variant-numeric:tabular-nums}.event-date{font-size:11px;color:var(--muted);margin-top:1px}.event-meta{font-size:12px;color:var(--muted);margin-top:6px}.badge{display:inline-flex;border-radius:5px;padding:2px 5px;font-size:10px;line-height:14px;font-weight:600;background:var(--greenwash);color:var(--green)}.badge.invalid{background:var(--secondary);color:var(--muted)}.badge.pending{background:var(--amberwash);color:var(--amber)}.chevron{align-self:center;font-size:24px;color:var(--muted);font-weight:300;margin-left:1px}.empty{padding:40px 24px;text-align:center;background:var(--card);border-radius:var(--radius);color:var(--muted)}.empty strong{display:block;font-size:17px;font-weight:600;color:var(--text);margin:10px 0 7px}.empty p{font-size:13px;line-height:1.6}.empty svg{width:34px;height:34px;opacity:.55}.back{display:inline-flex;align-items:center;gap:5px;margin:-9px 0 9px -3px}.detail-title{margin-bottom:15px}.detail-title .subtitle{font-size:13px;margin-top:5px}.detail-info{margin-top:15px;border-radius:16px;background:var(--card);padding:13px 16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:10px}.footer{text-align:center;color:var(--muted);font-size:10px;letter-spacing:.02em;padding:27px 0 0}.count{font-size:12px;color:var(--muted);font-weight:400}.status-icon{width:14px;height:14px;flex-shrink:0;margin-top:1px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@keyframes spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}@media(min-width:720px){.app{padding-inline:32px}.stage{border-radius:24px}.controls{padding:20px}.event-list{grid-template-columns:1fr 1fr}.capture{padding:17px 20px 14px}.statusline{margin-inline:20px}.video-wrap{aspect-ratio:16/9}.thumb{width:108px;flex-basis:108px;height:82px}.section-head{margin-top:4px}}@media(max-width:360px){.app{padding-inline:14px}.thumb{width:78px;flex-basis:78px}.event{gap:11px}.capture strong{font-size:14px}}
+</style>
+<style>
+.route-info{margin-top:12px;color:var(--muted);font-size:12px;max-width:560px}.route-info summary{display:flex;align-items:center;gap:8px;min-height:44px;list-style:none;cursor:pointer;-webkit-tap-highlight-color:transparent}.route-info summary::-webkit-details-marker{display:none}.route-info summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:8px}.route-info summary::after{content:"⌄";margin-left:2px;font-size:14px}.route-info[open] summary::after{transform:rotate(180deg)}.route-label{font-weight:600;color:var(--text)}.route-note{font-size:11px}.route-body{border-top:1px solid var(--line);padding:11px 0 3px;line-height:1.7}.route-body p+p{margin-top:6px}.route-time{font-size:11px;margin-top:7px}
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="topline"><div class="brand"><svg aria-hidden="true" viewBox="0 0 24 26" fill="none"><path d="M12 2 21 6v7c0 5-5 9-9 11C8 22 3 18 3 13V6l9-4Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/></svg>TESLACAM</div><div class="connection" id="connection" data-state="loading"><span class="dot"></span><span id="connectionText">正在连接</span></div></div>
+    <h1>哨兵</h1><p class="subtitle">随时回看，安心随行。</p>
+    <details class="route-info" id="routeInfo"><summary><span class="route-label" id="routeLabel">连接方式未确认</span><span class="route-note" id="routeNote">查看连接说明</span></summary><div class="route-body"><p id="routeDetail">正在识别本页的访问入口。</p><p>Tailscale 私网可能采用直连或中继。官方安卓客户端未开放供本网页读取的实时连接类型，使用私网地址不等于已确认 P2P 直连。</p><div class="route-time" id="routeObserved"></div></div></details>
+    <nav class="segmented" role="tablist" aria-label="录像分类"><button id="tabLive" role="tab" aria-selected="true" aria-controls="paneLive">准实时</button><button id="tabEvents" role="tab" aria-selected="false" aria-controls="paneEvents">事件</button></nav>
+  </header>
+  <section id="paneLive" role="tabpanel" aria-labelledby="tabLive">
+    <div class="section-head"><div><h2>车外视野</h2><div class="sub">原车录像 · 压缩播放</div></div><button class="text-button" id="latestButton">跟随最新</button></div>
+    <div id="liveMount"></div>
+    <div class="card controls" style="margin-top:14px"><div class="control-title">摄像头</div><div class="pills" id="liveViews" aria-label="准实时摄像头"></div><div class="space"></div><div class="control-title">最近片段</div><div class="pills minute-row" id="liveMinutes" aria-label="最近录制时间"></div></div>
+    <div class="notice" id="newClipNotice" hidden><span id="newClipText">有更新的录像</span><button id="newClipButton">立即查看</button></div>
+    <p class="help">准实时播放已完成的录像片段，有一定延迟。拍摄时间以画面下方为准；跟随最新时，当前片段播完后再接续新片段。</p>
+  </section>
+  <section id="paneEvents" role="tabpanel" aria-labelledby="tabEvents" hidden>
+    <div id="eventOverview"><div class="summary"><strong>录像事件 <span class="count" id="eventCount"></span></strong><span id="eventSummary">正在读取</span></div><div class="pills filters" id="eventFilters" aria-label="事件筛选"></div><div class="event-list" id="eventList"></div></div>
+    <div id="eventDetail" hidden><button class="text-button back" id="backButton"><span aria-hidden="true">‹</span> 事件列表</button><div class="detail-title"><h2 id="detailTitle">录像详情</h2><p class="subtitle" id="detailSubtitle"></p></div><div id="eventMount"></div><div class="card controls" style="margin-top:14px"><div class="control-title">摄像头</div><div class="pills" id="eventViews" aria-label="事件摄像头"></div><div class="space"></div><div class="control-title">录像片段</div><div class="pills minute-row" id="eventMinutes" aria-label="事件录制时间"></div><div id="qualityGroup"><div class="space"></div><div class="control-title">播放画质</div><div class="pills" id="eventQuality" aria-label="播放画质"></div></div></div><div class="detail-info"><span id="eventDetailState"></span><span>原始文件保留</span></div><p class="help" id="eventHelp"></p></div>
+  </section>
+  <footer class="footer">TESLACAM <span id="version"></span> · 私有录像</footer>
+</main>
+<div id="stage" class="stage" hidden>
+  <div class="video-wrap"><video id="player" muted playsinline controls preload="metadata" aria-label="车辆录像播放器"></video><div class="quad-labels" id="quadLabels" hidden aria-hidden="true"><span>前方</span><span>后方</span><span>左侧</span><span>右侧</span></div><div class="placeholder" id="placeholder"><svg aria-hidden="true" viewBox="0 0 32 32" fill="none"><rect x="3" y="7" width="20" height="18" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="m23 13 6-4v14l-6-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><strong id="placeholderTitle">等待录像</strong><small id="placeholderCopy">连接后将显示可用片段</small></div></div>
+  <div class="capture"><div><div class="eyebrow">拍摄时间 · 中国标准时间</div><strong id="captureTime">—</strong></div><div class="delay" id="captureAge">尚无录像</div></div>
+  <div class="statusline" id="playStatus" data-tone="normal"><div class="status-copy"><span class="spinner" id="spinner" hidden></span><span id="playMessage" role="status" aria-live="polite">正在读取录像索引</span></div><button class="retry" id="retryButton" hidden>重试</button></div>
+</div>
+<script>
+"use strict";
+const APP_VERSION = "4.2";
+const CAMERAS = {quad:"四路总览",front:"前方",back:"后方",left_repeater:"左侧",right_repeater:"右侧",left_pillar:"左柱",right_pillar:"右柱"};
+const CAMERA_ORDER = Object.keys(CAMERAS);
+const QUAD_CAMERAS = ["front","back","left_repeater","right_repeater"];
+const LIVE_REQUEST_TIMEOUT = 15000, LIVE_MAX_POLLS = 60, LIVE_MAX_TRANSIENT_RETRIES = 3;
+const $ = id => document.getElementById(id);
+const player = $("player");
+const state = {index:null,mode:"live",filter:"all",liveView:"quad",liveKey:null,follow:true,eventId:null,eventView:"quad",eventQuality:"proxy",eventMinute:null,source:"",media:null,mediaGeneration:0,selection:0,activeJob:null,prefetch:null,segmentTarget:null,lastLiveAttempt:null,videoFailure:null,mediaRetryTimer:null,indexTimer:null,indexFlight:false,indexController:null,cachedProbe:null,userPaused:false,resumeVisible:false,suspended:false,loading:false};
+const routeState = {enabled:false,controller:null,generation:0};
+function renderRoute(access="unknown", observedAt=null) {
+  const labels={tailnet:"Tailscale 私网",forwarded:"转发访问",lan:"局域网访问",external:"连接方式未确认",unknown:"连接方式未确认"};
+  const details={tailnet:"当前页面通过 Tailscale 私网访问车内手机；本次是否直连，尚无法在网页内自动核验。",forwarded:"当前请求经手机本机的转发入口进入；使用公网地址时，视频会通过公网服务器。",lan:"当前页面从局域网访问车内手机。",external:"已收到连接信息，但暂时无法可靠识别此访问入口。",unknown:"暂未取得有效连接信息，请稍后查看。"};
+  const key=Object.hasOwn(labels,access)?access:"unknown";
+  $("routeLabel").textContent=labels[key];$("routeNote").textContent=key==="tailnet"?"直连／中继未核验":"查看连接说明";$("routeDetail").textContent=details[key];
+  const time=typeof observedAt==="string"?Date.parse(observedAt):NaN;
+  $("routeObserved").textContent=Number.isFinite(time)?"入口检查时间 · "+captureLabel(time/1000):"";
+}
+function cancelRouteCheck() {
+  routeState.generation++;if(routeState.controller)routeState.controller.abort();routeState.controller=null;renderRoute();
+}
+async function refreshConnection() {
+  if(!routeState.enabled||document.hidden||state.suspended||routeState.controller)return;
+  const controller=new AbortController(),generation=++routeState.generation;routeState.controller=controller;let timedOut=false;
+  const timeout=setTimeout(()=>{timedOut=true;controller.abort();if(generation===routeState.generation)renderRoute();},5000);
+  try{
+    const response=await fetch("api/connection",{cache:"no-store",credentials:"same-origin",signal:controller.signal});
+    if(!response.ok)throw new Error("Connection status unavailable");const data=await response.json();
+    if(timedOut||generation!==routeState.generation||document.hidden||state.suspended)return;
+    if(!data||typeof data!=="object"||!["tailnet","forwarded","lan","external","unknown"].includes(data.access))throw new Error("Invalid connection status");
+    renderRoute(data.access,data.observed_at);
+  }catch(error){if(generation===routeState.generation&&!document.hidden&&!state.suspended)renderRoute();}
+  finally{clearTimeout(timeout);if(routeState.controller===controller)routeState.controller=null;}
+}
+const cameraIcon = () => { const s = document.createElementNS("http://www.w3.org/2000/svg","svg"); s.setAttribute("viewBox","0 0 28 28"); s.setAttribute("fill","none"); s.setAttribute("aria-hidden","true"); const p=document.createElementNS(s.namespaceURI,"path");p.setAttribute("d","M4 7h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Zm16 5 6-4v12l-6-4");p.setAttribute("stroke","currentColor");p.setAttribute("stroke-width","1.5");p.setAttribute("stroke-linejoin","round");s.append(p);return s; };
+function node(tag, cls, text) { const el=document.createElement(tag);if(cls)el.className=cls;if(text!=null)el.textContent=String(text);return el; }
+function pill(text, selected, action, small=false) { const b=node("button","pill"+(small?" small":""),text);b.type="button";b.setAttribute("aria-pressed",String(!!selected));b.onclick=action;return b; }
+function relativeFile(path) {
+  if(typeof path!=="string"||!path||path.startsWith("/")||/[\\?#\u0000-\u001f]/.test(path)||path.split("/").some(p=>!p||p==="."||p===".."))return null;
+  return "f/"+path.split("/").map(encodeURIComponent).join("/");
+}
+function cacheFile(path) { return typeof path==="string" && /^live-cache\/[A-Za-z0-9_.-]+\.mp4$/.test(path) ? path : null; }
+function epoch(key) { const m=String(key||"").match(/^(\d{4}-\d\d-\d\d)[T_](\d\d)[-:](\d\d)[-:](\d\d)/);return m?Date.parse(m[1]+"T"+m[2]+":"+m[3]+":"+m[4]+"+08:00")/1000:null; }
+function captureLabel(seconds, date=true) { if(!Number.isFinite(seconds))return "—";const d=new Date(seconds*1000);const parts=new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).formatToParts(d);const v=t=>(parts.find(x=>x.type===t)||{}).value||"00";return(date?v("month")+"月"+v("day")+"日 ":"")+v("hour")+":"+v("minute")+":"+v("second"); }
+function minuteLabel(key) { const n=epoch(key);return n===null?String(key||"").slice(11,16):captureLabel(n,false).slice(0,5); }
+function ageLabel(seconds) { const n=Math.max(0,Math.floor(seconds));if(n<60)return n+" 秒前";if(n<3600)return Math.floor(n/60)+" 分 "+n%60+" 秒前";if(n<86400)return Math.floor(n/3600)+" 小时 "+Math.floor(n%3600/60)+" 分前";return Math.floor(n/86400)+" 天前"; }
+function eventKind(e) { return e.kind==="SentryClips"?"哨兵":"手动保存"; }
+function events() { return state.index&&Array.isArray(state.index.events)?state.index.events:[]; }
+function currentEvent() { return events().find(e=>String(e.id)===state.eventId)||null; }
+function eventKeys(e) { return e&&e.clip_map?Object.keys(e.clip_map).filter(k=>Object.keys(e.clip_map[k]||{}).length).sort():[]; }
+function allLiveKeys() { if(!state.index)return [];return [...new Set([...(state.index.minutes||[]).map(m=>m.key),state.index.live&&state.index.live.key].filter(k=>typeof k==="string"&&epoch(k)!==null))].sort().reverse(); }
+function liveClips(key) { if(!state.index)return {};const m=(state.index.minutes||[]).find(x=>x.key===key);return {...(m&&m.clips||{}),...(state.index.live&&state.index.live.key===key?state.index.live.clips||{}:{})}; }
+function hasLiveView(key,view=state.liveView) { const clips=liveClips(key);return(view==="quad"?QUAD_CAMERAS:[view]).every(cam=>!!relativeFile(clips[cam])); }
+function liveKeys(view=state.liveView) { return allLiveKeys().filter(key=>hasLiveView(key,view)); }
+function liveSignature(key,view=state.liveView) { const clips=liveClips(key);return JSON.stringify((view==="quad"?QUAD_CAMERAS:[view]).map(cam=>[cam,clips[cam]||null])); }
+function setStatus(message, tone="normal", busy=false, retry=false) { $("playMessage").textContent=message;$("playStatus").dataset.tone=tone;$("spinner").hidden=!busy;$("retryButton").hidden=!retry; }
+function placeholder(title, copy) { $("placeholderTitle").textContent=title;$("placeholderCopy").textContent=copy||"";$("placeholder").hidden=false; }
+function cancelLiveJob(job) { if(!job)return;job.cancelled=true;clearTimeout(job.timer);job.timer=null;if(job.controller)job.controller.abort();job.controller=null; }
+function cancelPrefetch() { cancelLiveJob(state.prefetch);state.prefetch=null; }
+function cancelSelection(options={}) { state.selection++;clearTimeout(state.mediaRetryTimer);state.mediaRetryTimer=null;if(state.cachedProbe)state.cachedProbe.abort();state.cachedProbe=null;cancelLiveJob(state.activeJob);state.activeJob=null;if(!options.keepPrefetch)cancelPrefetch();state.loading=false; }
+function stopPlayer() {
+  state.mediaGeneration++;
+  player.oncanplay=player.onerror=player.onloadedmetadata=player.onended=player.onpause=player.onplay=player.ontimeupdate=player.onwaiting=player.onplaying=null;
+  player.pause();player.removeAttribute("src");player.load();state.source="";state.media=null;
+}
+function updateCapture() {
+  const media=state.media;let base=null,offset=0;
+  if(media){
+    if(media.kind==="live"||media.original||media.segmented){base=epoch(media.key);offset=(media.segmented?Number(media.offset)||0:0)+(Number.isFinite(player.currentTime)?player.currentTime:0);}
+    else{const map=media.map||[];const pos=Number.isFinite(player.currentTime)?player.currentTime:media.start||0;const entry=map.find((m,i)=>pos>=Number(m.start)&& (pos<Number(m.start)+Number(m.dur)||i===map.length-1));if(entry){base=epoch(entry.key);offset=Math.max(0,pos-Number(entry.start));}else base=epoch(media.key);}
+  }else if(state.mode==="live")base=epoch(state.liveKey);else base=epoch(state.eventMinute);
+  const captured=base===null?null:base+offset;
+  $("captureTime").textContent=captureLabel(captured);
+  const age=captured===null?null:Math.max(0,Date.now()/1000-captured);
+  $("captureAge").textContent=age===null?"尚无录像":ageLabel(age);
+  $("captureAge").classList.toggle("stale",age!==null&&age>300);
+}
+function tryPlay(generation) {
+  if(document.hidden||state.suspended||state.userPaused||generation!==state.mediaGeneration)return;
+  const promise=player.play();if(promise&&promise.catch)promise.catch(error=>{if(generation!==state.mediaGeneration||error.name==="AbortError")return;if(error.name==="NotAllowedError"){state.userPaused=true;setStatus("视频已就绪，请点画面中的播放按钮");}else setStatus("暂时无法启动播放，请重试","error",false,true);});
+}
+function playMedia(src, metadata, seekTo=0) {
+  if(!src){stopPlayer();placeholder("暂无可播放录像","请尝试其他片段");updateCapture();return;}
+  if(src===state.source&&state.media&&!player.error){
+    state.media={...metadata,start:seekTo};
+    if(Number.isFinite(player.duration)&&player.duration>0)player.currentTime=Math.min(Math.max(0,seekTo),Math.max(0,player.duration-.1));
+    else state.media.pendingSeek=seekTo;
+    state.userPaused=false;tryPlay(state.mediaGeneration);updateCapture();return;
+  }
+  stopPlayer();state.userPaused=false;state.source=src;state.media={...metadata,start:seekTo};const generation=state.mediaGeneration;
+  const valid=()=>generation===state.mediaGeneration&&state.source===src;
+  placeholder("正在加载录像","首次打开可能需要片刻");setStatus("正在加载视频…","normal",true);
+  player.muted=true;
+  player.onloadedmetadata=()=>{if(!valid())return;if(!Number.isFinite(player.duration)||player.duration<=0){if(state.mode==="live"||state.media&&state.media.segmented){recoverLiveMedia("该视频没有有效时长");return;}stopPlayer();placeholder("录像无法播放","该文件没有有效时长");setStatus("该视频没有有效时长，请选择其他片段","error",false,true);return;}const target=state.media.pendingSeek??state.media.start??0;player.currentTime=Math.min(Math.max(0,target),Math.max(0,player.duration-.1));updateCapture();tryPlay(generation);};
+  player.oncanplay=()=>{if(!valid())return;$("placeholder").hidden=true;setStatus(state.mode==="live"?(state.follow?"跟随最新 · 播完当前片段后接续":"历史片段 · 仅播放压缩版"):(metadata.original?"原画播放 · 流量较大":"压缩播放 · 节省流量"));};
+  player.onwaiting=()=>{if(valid()&&!player.ended)setStatus("正在缓冲…","normal",true);};
+  player.onplaying=()=>{if(!valid())return;$("placeholder").hidden=true;state.userPaused=false;setStatus(state.mode==="live"?(state.follow?"跟随最新 · 播完当前片段后接续":"历史片段 · 仅播放压缩版"):(metadata.original?"原画播放 · 流量较大":"压缩播放 · 节省流量"));ensurePrefetch();};
+  player.onpause=()=>{if(valid()&&player.paused&&player.readyState>=2&&!player.ended&&!document.hidden&&!state.suspended){state.userPaused=true;cancelPrefetch();setStatus("已暂停 · 点播放继续");}};
+  player.onplay=()=>{if(valid()){state.userPaused=false;ensurePrefetch();}};
+  player.ontimeupdate=()=>{if(valid())updateCapture();};
+  player.onended=()=>{if(!valid())return;state.userPaused=false;if(state.media&&state.media.segmented&&advanceSegment())return;if(state.mode==="live"&&state.follow)setStatus("当前片段已播完，等待新的完整片段");else setStatus("当前录像已播放完");};
+  player.onerror=()=>{if(!valid())return;const errors={1:"播放已取消",2:"视频网络请求失败",3:"视频解码失败",4:"视频格式不支持或文件无效"};const message=errors[player.error&&player.error.code]||"视频加载失败";if(state.mode==="live"||state.media&&state.media.segmented){recoverLiveMedia(message);return;}placeholder("暂时无法播放",message);setStatus(message,"error",false,true);};
+  player.src=src;player.load();updateCapture();tryPlay(generation);
+}
+function mountStage(destination) { const target=$(destination);if($("stage").parentNode!==target)target.append($("stage"));$("stage").hidden=false; }
+function renderLiveControls() {
+  const keys=liveKeys();
+  $("liveViews").replaceChildren(...CAMERA_ORDER.map(view=>{const b=pill(CAMERAS[view],state.liveView===view,()=>{state.liveView=view;startLive(!state.follow&&hasLiveView(state.liveKey,view)?state.liveKey:liveKeys(view)[0]);});b.disabled=!liveKeys(view).length;return b;}));
+  const follow=pill("● 跟随最新",state.follow,()=>followLatest(),true);follow.disabled=!keys.length;
+  $("liveMinutes").replaceChildren(follow,...keys.slice(0,18).map(key=>pill(minuteLabel(key),!state.follow&&key===state.liveKey,()=>{state.follow=false;startLive(key);},true)));
+  const latest=keys[0];const updated=!!(latest&&state.liveKey&&latest!==state.liveKey);
+  $("newClipNotice").hidden=!updated;
+  $("newClipText").textContent=updated?(state.follow?(state.prefetch&&state.prefetch.status==="ready"?"下一段已就绪，当前播完后接续":"正在准备下一段，当前录像继续播放"):"有更新录像 · "+minuteLabel(latest)):"";
+  $("latestButton").disabled=!keys.length;$("latestButton").textContent=state.follow?"正在跟随":"跟随最新";
+  $("quadLabels").hidden=state.liveView!=="quad"||$("placeholder").hidden===false;
+}
+function followLatest() { const key=liveKeys()[0];if(!key)return;state.follow=true;startLive(key); }
+function liveJobCurrent(job) {
+  if(!job||job.cancelled||document.hidden||state.suspended||state.mode!==(job.event?"events":"live"))return false;
+  if(job.event&&(state.eventId!==job.event||state.eventView!==job.view||state.eventQuality!=="proxy"))return false;
+  if(job.selection!==null)return state.activeJob===job&&job.selection===state.selection;
+  return state.prefetch===job&&(job.event||state.liveView===job.view)&&!state.userPaused;
+}
+function segmentSignature(key,view,part=0,event=null) { const e=event&&events().find(e=>String(e.id)===event),clips=e?(e.clip_map||{})[key]||{}:liveClips(key);return JSON.stringify([event,key,view,part,(view==="quad"?QUAD_CAMERAS:[view]).map(c=>clips[c]||null)]); }
+function newLiveJob(key,view,selection=null,part=0,event=null) { return {key,view,part,event,selection,signature:segmentSignature(key,view,part,event),status:"idle",data:null,controller:null,timer:null,cancelled:false,polls:0,failures:0}; }
+function sameSegment(job,target) { return !!job&&!job.cancelled&&job.status!=="failed"&&job.key===target.key&&job.view===target.view&&job.part===target.part&&job.event===target.event; }
+function currentSegmentTarget() { const target=state.segmentTarget;if(!target)return null;if(target.event)return state.mode==="events"&&state.eventId===target.event&&state.eventMinute===target.key&&state.eventView===target.view&&state.eventQuality==="proxy"?target:null;return state.mode==="live"&&state.liveKey===target.key&&state.liveView===target.view?target:null; }
+function finishLiveFailure(job,message,unavailable=false) {
+  if(!liveJobCurrent(job))return;job.status="failed";job.message=message;clearTimeout(job.timer);job.timer=null;
+  if(job.selection!==null){state.loading=false;if(!job.event)state.lastLiveAttempt={key:job.key,view:job.view,signature:liveSignature(job.key,job.view),status:"failed"};state.activeJob=null;placeholder(unavailable?"暂无有效压缩片段":"压缩暂不可用",message);setStatus(message,"error",false,true);}
+  else if(!job.event)renderLiveControls();
+}
+function consumeLiveJob(job) {
+  if(!liveJobCurrent(job)||job.selection===null||job.status!=="ready")return;
+  state.loading=false;state.activeJob=null;
+  state.segmentTarget={key:job.key,view:job.view,part:Number.isInteger(job.data.part)?job.data.part:0,event:job.event};
+  if(job.event){state.eventMinute=job.key;renderEventControls();}else{state.liveKey=job.key;state.lastLiveAttempt={key:job.key,view:job.view,signature:liveSignature(job.key,job.view),status:"ready"};renderLiveControls();}
+  playMedia(job.data.url,{kind:job.event?"event":"live",event:job.event,key:job.key,view:job.view,segmented:true,part:Number.isInteger(job.data.part)?job.data.part:null,offset:Number(job.data.offset)||0,nextPart:Number.isInteger(job.data.next_part)?job.data.next_part:null,catchUp:!!job.catchUp});$("quadLabels").hidden=job.view!=="quad";ensurePrefetch();
+}
+function scheduleLivePoll(job,seconds) { if(!liveJobCurrent(job))return;clearTimeout(job.timer);job.timer=setTimeout(()=>{job.timer=null;pollLiveJob(job);},Math.min(15,Math.max(1,seconds))*1000); }
+function retryLiveFailure(job,message) {
+  if(!liveJobCurrent(job))return;
+  const canRetry=job.failures<LIVE_MAX_TRANSIENT_RETRIES;
+  if(!canRetry){finishLiveFailure(job,message+"，请点重试");return;}
+  job.failures++;job.status="retrying";
+  if(job.selection!==null)setStatus("连接暂不稳定，正在重试（"+job.failures+"/"+LIVE_MAX_TRANSIENT_RETRIES+"）…","normal",true);
+  scheduleLivePoll(job,Math.pow(2,job.failures));
+}
+async function pollLiveJob(job) {
+  if(!liveJobCurrent(job)||job.controller||job.status==="ready"||job.status==="failed")return;
+  if(job.polls>=LIVE_MAX_POLLS){finishLiveFailure(job,"压缩等待时间过长，请点重试");return;}
+  job.polls++;job.status="requesting";const controller=new AbortController();job.controller=controller;let timedOut=false;
+  const timeout=setTimeout(()=>{timedOut=true;controller.abort();},LIVE_REQUEST_TIMEOUT);
+  try{
+    const url=new URL("api/live",document.baseURI);url.searchParams.set("view",job.view);url.searchParams.set("minute",job.key);url.searchParams.set("part",String(job.part));url.searchParams.set("priority",job.selection===null?"prefetch":"foreground");if(job.event)url.searchParams.set("event",job.event);
+    const response=await fetch(url,{signal:controller.signal,cache:"no-store",credentials:"same-origin"});const data=await response.json();
+    if(!liveJobCurrent(job))return;
+    if(response.status===202||response.status===429){
+      job.status=response.status===429?"queued":data.status==="processing"?"processing":"queued";
+      if(job.selection!==null){placeholder(job.status==="queued"?"等待压缩任务":"正在准备 15 秒片段","分段准备，完成后自动播放");setStatus(job.status==="queued"?"压缩任务排队中…":"正在生成当前短片段…","normal",true);}
+      scheduleLivePoll(job,Number(data.retry_after)||2);return;
+    }
+    if(response.ok&&data.status==="ready"){
+      const src=cacheFile(data.url);if(!src||(data.key&&data.key!==job.key)||(data.view&&data.view!==job.view)||(data.event||null)!==job.event||data.part!==job.part){finishLiveFailure(job,"压缩片段响应不匹配，请点重试");return;}
+      job.data={...data,url:src};job.status="ready";
+      if(job.selection!==null)consumeLiveJob(job);else{if(!job.event)renderLiveControls();if(player.ended&&!state.userPaused)advanceSegment();}return;
+    }
+    if(response.status===503||response.status===502||response.status===504||response.status===500||response.status===408){retryLiveFailure(job,data.message||"压缩服务暂不可用");return;}
+    finishLiveFailure(job,data.message||"暂无有效片段，请选择其他时间或重试",response.status===404);
+  }catch(error){if(!liveJobCurrent(job))return;if(error.name==="AbortError"&&!timedOut)return;retryLiveFailure(job,timedOut?"请求超时":"连接暂时中断");}
+  finally{clearTimeout(timeout);if(job.controller===controller)job.controller=null;}
+}
+function requestLive(selection,key,view,part=0,event=null) {
+  if(selection!==state.selection||state.mode!==(event?"events":"live")||document.hidden||state.suspended||!event&&!hasLiveView(key,view))return;
+  if(state.activeJob&&liveJobCurrent(state.activeJob))return;
+  state.segmentTarget={key,view,part,event};
+  const job=newLiveJob(key,view,selection,part,event);state.activeJob=job;state.loading=true;pollLiveJob(job);
+}
+function nextSegmentTarget() {
+  const m=state.media;if(!m||!m.segmented)return null;
+  const event=m.event||null,view=m.view;
+  if(!event&&state.follow){const latest=liveKeys(view)[0];if(m.catchUp&&latest&&latest>m.key)return {key:latest,view,part:0,event:null};}
+  if(Number.isInteger(m.nextPart))return {key:m.key,view,part:m.nextPart,event};
+  if(event){const keys=eventKeys(currentEvent()),next=keys.find(k=>k>m.key);return next?{key:next,view,part:0,event}:null;}
+  if(!state.follow)return null;const latest=liveKeys(view)[0];return latest&&latest>m.key?{key:latest,view,part:0,event:null}:null;
+}
+function ensurePrefetch() {
+  if(document.hidden||state.suspended||state.userPaused||!state.media||!state.media.segmented||player.paused||player.ended||state.loading)return;
+  const target=nextSegmentTarget();if(!target)return;
+  const previous=state.prefetch;if(sameSegment(previous,target))return;
+  if(previous&&previous.status==="failed"&&previous.signature===segmentSignature(target.key,target.view,target.part,target.event))return;
+  cancelPrefetch();state.prefetch=newLiveJob(target.key,target.view,null,target.part,target.event);pollLiveJob(state.prefetch);if(!target.event)renderLiveControls();
+}
+function advanceSegment() { if(state.userPaused||document.hidden||state.suspended)return false;const target=nextSegmentTarget();if(!target)return false;if(target.event){state.eventMinute=target.key;renderEventControls();playEvent({part:target.part,automatic:true});}else startLive(target.key,{part:target.part,automatic:true});return true; }
+function advanceLive() { return state.mode==="live"&&advanceSegment(); }
+function recoverLiveMedia(message) {
+  const m=state.media||{},event=m.event||null,key=m.key||state.liveKey,view=m.view||state.liveView,part=Number.isInteger(m.part)?m.part:0,signature=segmentSignature(key,view,part,event),previous=state.videoFailure;
+  const attempts=previous&&previous.signature===signature?previous.attempts:0;
+  cancelSelection();stopPlayer();if(!event)state.lastLiveAttempt={key,view,signature:liveSignature(key,view),status:"failed"};placeholder("暂时无法播放",message);setStatus(message,"error",false,true);updateCapture();
+  if(state.userPaused||document.hidden||state.suspended||attempts>=2)return;
+  state.videoFailure={signature,attempts:attempts+1};state.loading=true;const selection=state.selection;
+  setStatus("播放中断，正在重试（"+(attempts+1)+"/2）…","normal",true);
+  state.mediaRetryTimer=setTimeout(()=>{state.mediaRetryTimer=null;if(selection!==state.selection||state.userPaused||document.hidden||state.suspended)return;state.loading=false;if(event){state.eventMinute=key;playEvent({part,automatic:true,preserveVideoRetry:true});}else startLive(key,{part,automatic:true,preserveVideoRetry:true});},attempts?5000:2000);
+}
+async function tryCachedLive(selection,key,view) {
+  const controller=new AbortController();state.cachedProbe=controller;state.loading=true;const timeout=setTimeout(()=>controller.abort(),LIVE_REQUEST_TIMEOUT);
+  try{const url=new URL("api/live",document.baseURI);url.searchParams.set("view",view);url.searchParams.set("cached","1");const response=await fetch(url,{signal:controller.signal,cache:"no-store",credentials:"same-origin"});const data=await response.json();
+    if(selection!==state.selection||state.mode!=="live"||state.liveView!==view||document.hidden||state.suspended)return;
+    const recent=liveKeys(view).slice(0,3);if(response.ok&&data.status==="ready"&&cacheFile(data.url)&&data.view===view&&!data.event&&recent.includes(data.key)){
+      const job=newLiveJob(data.key,view,selection,Number.isInteger(data.part)?data.part:0);job.status="ready";job.data=data;job.catchUp=true;state.activeJob=job;consumeLiveJob(job);return;
+    }
+  }catch(error){/* A cache miss or timed-out lookup falls through to a bounded foreground job. */}
+  finally{clearTimeout(timeout);if(state.cachedProbe===controller)state.cachedProbe=null;}
+  if(selection===state.selection&&state.mode==="live"&&state.liveView===view&&!document.hidden&&!state.suspended){state.loading=false;requestLive(selection,key,view,0);}
+}
+function startLive(key,options={}) {
+  if(state.mode!=="live")return;
+  const part=Number.isInteger(options.part)?options.part:0,cold=!!options.cached;
+  const prefetched=sameSegment(state.prefetch,{key,view:state.liveView,part,event:null})?state.prefetch:null;
+  cancelSelection({keepPrefetch:!!prefetched});stopPlayer();state.userPaused=false;state.liveKey=key||null;if(!options.preserveVideoRetry)state.videoFailure=null;mountStage("liveMount");renderLiveControls();updateCapture();
+  if(!key||!hasLiveView(key)){
+    state.lastLiveAttempt=key?{key,view:state.liveView,signature:liveSignature(key),status:"unavailable"}:null;
+    placeholder(state.liveView==="quad"?"等待四路完整录像":"还没有可用录像",state.liveView==="quad"?"前、后、左、右四路完成后自动显示":"等待所选摄像头生成完整片段");setStatus(state.index?"暂未发现所选视角的完整片段":"正在读取录像索引","normal",!state.index);return;
+  }
+  state.lastLiveAttempt={key,view:state.liveView,signature:liveSignature(key),status:"loading"};
+  state.segmentTarget={key,view:state.liveView,part,event:null};
+  placeholder("正在准备 15 秒片段",state.liveView==="quad"?"四路同步压缩，逐段接续播放":"仅准备所选视角的短片段");$("quadLabels").hidden=true;setStatus("正在检查压缩片段…","normal",true);
+  if(prefetched){
+    state.prefetch=null;prefetched.selection=state.selection;state.activeJob=prefetched;state.loading=true;
+    if(prefetched.status==="ready")consumeLiveJob(prefetched);
+    else if(!prefetched.controller&&!prefetched.timer)pollLiveJob(prefetched);
+    return;
+  }
+  if(cold&&state.follow&&part===0){tryCachedLive(state.selection,key,state.liveView);return;}
+  requestLive(state.selection,key,state.liveView,part);
+}
+function hasReadyEventProxy(e) { return eventKeys(e).some(key=>eventMap(e).some(m=>m.key===key)&&(e.mosaic||Object.values(e.proxies||{}).some(p=>!!relativeFile(p)))); }
+function eventState(e) { if(!eventKeys(e).length)return {text:"无有效录像",cls:"invalid"};if(e.status==="growing")return {text:"录制中",cls:"pending"};return hasReadyEventProxy(e)?{text:"压缩版可播",cls:""}:{text:"原片可用 · 压缩待准备",cls:"pending"}; }
+function renderEventList() {
+  const all=events();const valid=all.filter(e=>eventKeys(e).length).length;
+  $("eventCount").textContent=String(all.length);$("eventSummary").textContent=all.length?valid+" 个有有效原片":"暂无事件";
+  $("eventFilters").replaceChildren(...[["all","全部"],["sentry","哨兵"],["saved","手动保存"]].map(([key,label])=>pill(label,state.filter===key,()=>{state.filter=key;renderEventList();},true)));
+  const filtered=all.filter(e=>state.filter==="all"||(state.filter==="sentry"?e.kind==="SentryClips":e.kind!=="SentryClips"));
+  if(!filtered.length){const empty=node("div","empty");empty.append(cameraIcon(),node("strong","",state.index?"还没有这类事件":"正在读取事件"),node("p","",state.index?"保存的行车记录仪和哨兵事件会显示在这里。":"请稍候，正在连接车内录像。"));$("eventList").replaceChildren(empty);return;}
+  $("eventList").replaceChildren(...filtered.map(e=>{
+    const b=node("button","event");b.type="button";b.onclick=()=>openEvent(String(e.id));
+    const thumb=node("span","thumb");thumb.append(cameraIcon());const imgSrc=relativeFile(e.thumb);if(imgSrc){const img=node("img");img.loading="lazy";img.alt="";img.src=imgSrc;img.onerror=()=>img.remove();thumb.append(img);}
+    const copy=node("span","event-copy"),top=node("span","event-top"),status=eventState(e);top.append(node("span","event-type",eventKind(e)),node("span","badge "+status.cls,status.text));
+    const time=epoch(e.time)||epoch(e.name);copy.append(top,node("strong","",time?captureLabel(time,false):"时间未知"),node("div","event-date",time?captureLabel(time).split(" ")[0]:String(e.name||"")));
+    const count=eventKeys(e).length;copy.append(node("div","event-meta",count?count+" 段录像 · "+(e.cams||[]).length+" 路摄像头":"原文件存在，但未检测到有效视频"));b.append(thumb,copy,node("span","chevron","›"));return b;
+  }));
+}
+function eventMap(e) { return Array.isArray(e&&e.mosaic_map)?e.mosaic_map.filter(m=>typeof m.key==="string"&&Number.isFinite(Number(m.start))&&Number.isFinite(Number(m.dur))&&Number(m.dur)>0):[]; }
+function hasEventView(e,key,view) { const clips=e&&(e.clip_map||{})[key]||{};return (view==="quad"?QUAD_CAMERAS:[view]).every(c=>!!relativeFile(clips[c])); }
+function renderEventControls() {
+  const e=currentEvent();if(!e)return;
+  const keys=eventKeys(e),clips=e.clip_map&&e.clip_map[state.eventMinute]||{};
+  const time=epoch(e.time)||epoch(e.name);$("detailTitle").textContent=eventKind(e);$("detailSubtitle").textContent=(time?captureLabel(time):String(e.name||"时间未知"))+(e.city?" · "+e.city:"");
+  const views=CAMERA_ORDER.filter(view=>view==="quad"||clips[view]||(e.proxies||{})[view]);
+  $("eventViews").replaceChildren(...views.map(view=>{const b=pill(CAMERAS[view],state.eventView===view,()=>{state.eventView=view;state.eventQuality="proxy";state.userPaused=false;renderEventControls();playEvent();});b.disabled=!keys.length||!hasEventView(e,state.eventMinute,view)&&!(view==="quad"&&e.mosaic);return b;}));
+  $("eventMinutes").replaceChildren(...keys.map(key=>pill(minuteLabel(key),state.eventMinute===key,()=>{state.eventMinute=key;state.userPaused=false;renderEventControls();playEvent();},true)));
+  $("qualityGroup").hidden=state.eventView==="quad"||!keys.length;
+  $("eventQuality").replaceChildren(...[["proxy","流畅 · 压缩版"],["orig","原画"]].map(([q,label])=>pill(label,state.eventQuality===q,()=>{state.eventQuality=q;state.userPaused=false;renderEventControls();playEvent();},true)));
+  $("eventDetailState").textContent=eventState(e).text+(keys.length?" · "+keys.length+" 段录像":"");
+  $("eventHelp").textContent=!keys.length?"该事件的原片没有有效画面或时长，无法播放。所有原始文件均保留。":state.eventView==="quad"?"四路合成压缩播放；未缓存的录像按 15 秒逐段准备并自动接续。":"优先播放已有流畅版；缺失时准备当前短片段。原画需手动选择，可能消耗更多流量。";
+  $("quadLabels").hidden=state.eventView!=="quad"||!state.media||$("placeholder").hidden===false;
+}
+function playEvent(options={}) {
+  if(state.mode!=="events")return;
+  const part=Number.isInteger(options.part)?options.part:0,e=currentEvent(),key=state.eventMinute,view=state.eventView,event=state.eventId;
+  const prefetched=sameSegment(state.prefetch,{key,view,part,event})?state.prefetch:null;
+  const keepSegment=!!options.automatic&&state.media&&state.media.segmented;
+  cancelSelection({keepPrefetch:!!prefetched});if(!options.preserveVideoRetry)state.videoFailure=null;
+  if(!e){stopPlayer();placeholder("该事件已不在索引中","请返回事件列表刷新");setStatus("事件不可用","error");return;}
+  const keys=eventKeys(e);if(!keys.length){stopPlayer();placeholder("无有效录像","该事件的原片没有有效画面或时长，原文件已保留");setStatus("请选择其他有有效录像的事件");updateCapture();return;}
+  const original=view!=="quad"&&state.eventQuality==="orig";
+  let path=null,start=0;
+  if(original)path=(e.clip_map[key]||{})[view];
+  else{
+    path=view==="quad"?e.mosaic:(e.proxies||{})[view];
+    const entry=eventMap(e).find(m=>m.key===key);
+    if(!entry||keepSegment||part>0)path=null;else start=Number(entry.start);
+    if(!relativeFile(path)){
+      stopPlayer();updateCapture();
+      if(!hasEventView(e,key,view)){cancelPrefetch();placeholder("该分钟暂无此视角","请选择其他镜头或时间");setStatus("没有完整的所选视角原片","error",false,true);return;}
+      state.segmentTarget={key,view,part,event};
+      state.userPaused=false;placeholder("正在准备 15 秒片段","直接准备当前选中的录像，无需等待整个事件");setStatus("正在检查事件压缩片段…","normal",true);
+      if(prefetched){state.prefetch=null;prefetched.selection=state.selection;state.activeJob=prefetched;state.loading=true;if(prefetched.status==="ready")consumeLiveJob(prefetched);else if(!prefetched.controller&&!prefetched.timer)pollLiveJob(prefetched);return;}
+      requestLive(state.selection,key,view,part,event);return;
+    }
+  }
+  cancelPrefetch();
+  const src=relativeFile(path);
+  if(!src){stopPlayer();placeholder(original?"该视角暂无原画":"该视角暂无流畅版",original?"请尝试其他摄像头或时间":"可选择其他视角，或手动选择原画");setStatus(original?"该分钟没有有效原画片段":"流畅版缺失，未自动加载原画","error",false,true);updateCapture();return;}
+  state.segmentTarget=null;playMedia(src,{kind:"event",key,view,original,map:eventMap(e)},start);
+}
+function openEvent(id) {
+  cancelSelection();stopPlayer();state.eventId=id;const e=currentEvent();const keys=eventKeys(e);state.eventMinute=keys[0]||null;state.eventQuality="proxy";const mapped=eventMap(e).some(m=>m.key===state.eventMinute),readyCamera=CAMERA_ORDER.find(c=>c!=="quad"&&mapped&&relativeFile((e&&e.proxies||{})[c])&&hasEventView(e,state.eventMinute,c));state.eventView=e&&mapped&&e.mosaic?"quad":readyCamera||(hasEventView(e,state.eventMinute,"quad")?"quad":CAMERA_ORDER.find(c=>c!=="quad"&&hasEventView(e,state.eventMinute,c))||"front");
+  $("eventOverview").hidden=true;$("eventDetail").hidden=false;mountStage("eventMount");renderEventControls();playEvent();
+}
+function backToEvents() { cancelSelection();stopPlayer();state.eventId=null;$("stage").hidden=true;$("eventDetail").hidden=true;$("eventOverview").hidden=false;renderEventList(); }
+function switchMode(mode) {
+  if(mode===state.mode)return;cancelSelection();stopPlayer();state.mode=mode;state.userPaused=false;
+  $("tabLive").setAttribute("aria-selected",String(mode==="live"));$("tabEvents").setAttribute("aria-selected",String(mode==="events"));$("paneLive").hidden=mode!=="live";$("paneEvents").hidden=mode!=="events";
+  if(mode==="live"){mountStage("liveMount");startLive(state.follow?liveKeys()[0]:state.liveKey||liveKeys()[0]);}
+  else if(state.eventId){mountStage("eventMount");renderEventControls();playEvent();}
+  else{$("stage").hidden=true;renderEventList();}
+}
+async function refreshIndex() {
+  if(state.indexFlight||document.hidden)return;state.indexFlight=true;const controller=new AbortController();state.indexController=controller;const timeout=setTimeout(()=>controller.abort(),15000);
+  try{
+    const response=await fetch("index.json?t="+Date.now(),{cache:"no-store",signal:controller.signal,credentials:"same-origin"});if(!response.ok)throw new Error("HTTP "+response.status);const data=await response.json();if(!data||typeof data!=="object"||!Array.isArray(data.events)||!Array.isArray(data.minutes))throw new Error("录像索引格式无效");state.index=data;
+    $("connection").dataset.state="ready";$("connectionText").textContent="已连接";
+    if(state.mode==="live"){
+      const keys=liveKeys();renderLiveControls();
+      if(!state.liveKey&&keys.length)startLive(keys[0],{cached:true});
+      else if(!state.loading&&!state.userPaused){
+        const attempt=state.lastLiveAttempt;const changed=attempt&&attempt.key===state.liveKey&&attempt.view===state.liveView&&attempt.signature!==liveSignature(state.liveKey);
+        if(state.follow&&player.ended)advanceLive();
+        else if(!state.media&&state.follow&&keys[0]&&keys[0]>state.liveKey)startLive(keys[0],{automatic:true});
+        else if(!state.media&&changed&&hasLiveView(state.liveKey))startLive(state.liveKey,{automatic:true});
+      }
+      if(!keys.length&&!state.media&&!state.loading){placeholder(state.liveView==="quad"?"等待四路完整录像":"还没有可用录像",state.liveView==="quad"?"前、后、左、右四路完成后自动显示":"等待所选摄像头生成完整片段");setStatus("暂未发现所选视角的完整片段");}
+      ensurePrefetch();
+    }else if(!state.eventId)renderEventList();else renderEventControls();
+    updateCapture();
+  }catch(error){if(document.hidden)return;$("connection").dataset.state="error";$("connectionText").textContent="连接中断";if(!state.index){setStatus("无法读取录像索引，请检查连接后重试","error",false,true);placeholder("暂时无法连接","请检查车内手机与网络连接");if(state.mode==="events")renderEventList();}}
+  finally{clearTimeout(timeout);state.indexFlight=false;if(state.indexController===controller)state.indexController=null;clearTimeout(state.indexTimer);if(!document.hidden){state.indexTimer=setTimeout(refreshIndex,8000);refreshConnection();}}
+}
+$("tabLive").onclick=()=>switchMode("live");$("tabEvents").onclick=()=>switchMode("events");$("latestButton").onclick=followLatest;$("newClipButton").onclick=followLatest;$("backButton").onclick=backToEvents;
+$("retryButton").onclick=()=>{if(!state.index){refreshIndex();return;}state.userPaused=false;const target=currentSegmentTarget(),part=target?target.part:0;if(state.mode==="live")startLive(state.liveKey||liveKeys()[0],{part});else playEvent({part});};
+function suspendPage() {
+  if(state.suspended)return;state.suspended=true;cancelRouteCheck();state.resumeVisible=!!state.source&&!player.paused&&!player.ended&&!state.userPaused;clearTimeout(state.indexTimer);if(state.indexController)state.indexController.abort();cancelSelection();player.pause();
+}
+function resumePage() {
+  if(document.hidden)return;state.suspended=false;refreshIndex();const target=currentSegmentTarget(),part=target?target.part:0;if(state.mode==="live"&&!state.source&&state.liveKey&&!state.userPaused)requestLive(state.selection,state.liveKey,state.liveView,part);else if(state.mode==="events"&&!state.source&&state.eventId&&!state.userPaused)playEvent({part});else if(state.resumeVisible&&!state.userPaused)tryPlay(state.mediaGeneration);state.resumeVisible=false;updateCapture();
+}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)suspendPage();else resumePage();});
+window.addEventListener("pagehide",suspendPage);
+window.addEventListener("pageshow",event=>{if(event.persisted)resumePage();});
+$("version").textContent=APP_VERSION;routeState.enabled=true;mountStage("liveMount");renderLiveControls();renderEventList();refreshIndex();setInterval(()=>{if(!document.hidden)updateCapture();},1000);
+</script>
+</body>
+</html>
