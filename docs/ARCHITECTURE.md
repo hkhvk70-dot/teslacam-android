@@ -5,7 +5,7 @@
 ```text
 车机 USB 写入
     ↓
-USB 采集器／稳定文件视图（DeepSeek 部分，待合并）
+USB 采集器（DeepSeek；只读映像视图不具备快照保证）
     ↓
 events/TeslaCam/{RecentClips,SentryClips,SavedClips}
     ↓
@@ -18,7 +18,9 @@ web/serve.py ← web/index.html
 Tailscale 私网或用户自行配置的转发 → 接收端浏览器
 ```
 
-采集层必须交付稳定可读的文件；网页层不能解决块设备的并发挂载、一致性和车机写入问题。请勿将读写同一文件系统的不同挂载点视为天然安全的共享机制。具体快照或同步实现须以采集器代码为准。
+当前采集层只读挂载映像，按较新片段或跨扫描大小稳定来决定复制，用 `.part` 后重命名发布。该实现没有快照、写入冻结或主机提交协议；网页层不能补足此一致性保证。详见 [限制](COMPATIBILITY.md)。
+
+`pipeline.sh` 每四轮调用一次全量 `collect.sh`，其余调用 `live_collect.sh`；每轮后生成索引并检查服务。15 秒是循环的休眠间隔，实际周期还包括采集与索引耗时，不代表 15 秒端到端直播延迟。
 
 ## 索引结构
 
@@ -62,3 +64,11 @@ HTTP 预览只启动一个编码工作线程，保留有限等待队列；历史
 | 历史压缩 | `EV`, `PREFIX`, `FFMPEG`, `FFPROBE`, `TC_PYTHON`, `TC_ENCODE_LOCK` |
 
 HTTP 的 `ROOT`、索引的 `OUT` 和压缩的 `EV` 应指向同一个事件根目录。将 `web/index.html` 安装至这个目录时应保留相对 API 路径。页面没有写死用户的服务器或私网 IP。
+
+## 可选后台队列
+
+`ENABLE_EVENT_QUEUE=1` 时，由 `transcode_queue.sh` 启动 Python worker。worker 从索引中选择安静的完整/部分事件，优先最新事件；不依赖旧 `.last_request` 文件。失败按当前源版本退避重试，源变化后可重新处理，不永久依赖 `.failed`。
+
+worker 只锁自身单实例文件，不重复获取编码锁；实际 FFmpeg 锁由 `transcode.sh` 持有并在每路之间释放。流水线将同一锁路径传给 HTTP 和压缩 worker，避免自锁。后台整事件队列默认关闭，前台 15 秒按需预览继续可用。
+
+流水线与可选队列都可能更新索引。索引、审计和探测缓存使用各自任务独占的临时文件再原子替换，避免同名临时文件相互覆盖。这保证发布 JSON 的完整性，不保证不同任务观察的录像树处于同一时刻。

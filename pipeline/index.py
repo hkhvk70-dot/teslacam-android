@@ -11,6 +11,7 @@ import math
 import os
 import re
 import subprocess
+import tempfile
 import time
 
 OUT = os.environ.get("OUT", "/data/teslacam/events")
@@ -34,12 +35,33 @@ def load_cache():
         return {}
 
 
-def save_cache(c):
-    tmp = CACHE_FILE + ".tmp"
+def atomic_json(path, value):
+    """A writer owns its temporary name, including concurrent index runs."""
+    parent = os.path.dirname(path)
+    fd, tmp = tempfile.mkstemp(prefix="." + os.path.basename(path) + ".", suffix=".tmp", dir=parent)
     try:
-        with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(c, f)
-        os.replace(tmp, CACHE_FILE)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(value, f, ensure_ascii=False, separators=(",", ":"))
+        for attempt in range(8):
+            try:
+                os.replace(tmp, path)
+                break
+            except PermissionError:
+                # Windows may briefly deny overlapping rename/delete handles.
+                # Android/POSIX errors remain immediate; retries are bounded.
+                if os.name != "nt" or attempt == 7:
+                    raise
+                time.sleep(0.01 * (attempt + 1))
+    finally:
+        try:
+            os.unlink(tmp)
+        except FileNotFoundError:
+            pass
+
+
+def save_cache(c):
+    try:
+        atomic_json(CACHE_FILE, c)
     except Exception:
         pass
 
@@ -398,19 +420,13 @@ def main():
         "stats": {"events": len(events), "by_status": counts, "recent_minutes": len(keys)},
     }
 
-    tmp = os.path.join(OUT, ".index.json.tmp")
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
-    os.replace(tmp, os.path.join(OUT, "index.json"))
+    atomic_json(os.path.join(OUT, "index.json"), data)
 
     audit["unknown_cameras"] = sorted(set(audit["unknown_cameras"]))
     for k in ("unfinished", "unknown_files"):
         audit[k] = audit[k][:50]
     audit["checked_at"] = int(time.time())
-    tmp = os.path.join(OUT, ".audit.json.tmp")
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(audit, f, ensure_ascii=False, separators=(",", ":"))
-    os.replace(tmp, os.path.join(OUT, "audit.json"))
+    atomic_json(os.path.join(OUT, "audit.json"), audit)
 
     save_cache(cache)
 

@@ -13,6 +13,9 @@ id_ed25519*
 config.local.*
 frpc.toml
 frps.toml
+msd.conf
+sepolicy.rules
+health.json
 
 # Runtime footage, device images, logs, and personal captures
 events/

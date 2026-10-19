@@ -1,0 +1,33 @@
+# 示例配置（请复制到 /data/teslacam/msd.conf 并按实际情况修改）
+# 本文件不含任何密钥、访问码或设备序列号。
+
+# 录像磁盘映像（特斯拉直接写入这个文件）
+IMG=/data/teslacam/cam_disk.img
+
+# USB 组合。mass_storage,adb = U 盘 + adb 同时可用（厂商 HAL 原生支持）
+# 机型相关：某些设备可能只支持 mass_storage
+CFG=mass_storage,adb
+
+# 设备上观察到的 USB 控制器为 a600000.dwc3。
+# 当前脚本依赖厂商 HAL 绑定 UDC，尚未实现通用控制器配置项。
+
+# FAT 修复：镜像静默多少分钟后视为安全窗口
+MAINT_IDLE_MIN=45
+
+# FAT 修复的最小间隔（小时）
+MAINT_HOURS=24
+
+# RecentClips 保留多少分钟（真实数据约 11.7 GB/小时，60 分钟 ≈ 12 GB）
+RECENT_KEEP_MIN=60
+
+# 事件（SentryClips / SavedClips）保留天数
+KEEP_DAYS=60
+
+# 剩余空间低于此值时触发清理
+FREE_MIN_GB=15
+
+# 默认只运行按需分段预览；整事件预转码和个人 FRP 服务均显式选择。
+ENABLE_EVENT_QUEUE=0
+ENABLE_FRP=0
+# 必须与网页服务及历史压缩脚本指向同一个编码锁。
+ENCODE_LOCK=/data/local/tmp/teslacam-encode.lock

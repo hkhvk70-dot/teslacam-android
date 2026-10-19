@@ -1,0 +1,96 @@
+{
+  "input_archive_sha256": "a57916287a9795f6521556e739a5de49a915669a36c202934fbe8036c978b3c4",
+  "note": "Input-file hashes, not hashes of integrated files. Docs were rewritten and source changes are described in INTEGRATION.md. No original private README was copied.",
+  "files": [
+    {
+      "file": "config/msd.conf.example",
+      "bytes": 873,
+      "sha256": "5f32b7a7e393108c9c01b6225b95ef543d97284148da9ff797d45788c7d213f0"
+    },
+    {
+      "file": "scripts/README.md",
+      "bytes": 1182,
+      "sha256": "6e2aa7e319487a0d090172e30dde36d8d3d03c28043bfdbf4563f2229f37f197"
+    },
+    {
+      "file": "src/collect.sh",
+      "bytes": 5187,
+      "sha256": "8f565790a66be85bc6853fd3d9660b5bda7f2416ce85daf35fe16a6f789d0784"
+    },
+    {
+      "file": "src/fsck_img.sh",
+      "bytes": 973,
+      "sha256": "e2e96c961e4bf2afd2eba544e191a8558f5c9d0f3064a8c734545d3a39a3c61e"
+    },
+    {
+      "file": "src/health.sh",
+      "bytes": 3471,
+      "sha256": "80638e7c2ea41b43f8c4ad82361f28582d8861079d1b9662054535a071e096a1"
+    },
+    {
+      "file": "src/index.py",
+      "bytes": 14423,
+      "sha256": "fbcecfc7b55366f1e3f93501e8e8e452213bd7e9cb8c4347c95b1b87357741b5"
+    },
+    {
+      "file": "src/live_collect.sh",
+      "bytes": 2362,
+      "sha256": "43a5c5bb57bc0ef4c8e446abb3310e16d6bc24cf6e44b6e3d0a4f6825db18ba3"
+    },
+    {
+      "file": "src/maint.sh",
+      "bytes": 2706,
+      "sha256": "e7675b228bd8bb742c589ccc10ac0f1a9a9f6e75d9dd39374473bc903f93f339"
+    },
+    {
+      "file": "src/msd.sh",
+      "bytes": 2069,
+      "sha256": "5675cdaee9e9506a8c164f7e8a08f05c5f3b9b54871d01f109c2fd8626216c59"
+    },
+    {
+      "file": "src/msdwatch.sh",
+      "bytes": 1451,
+      "sha256": "bf22f85d6fb9b424fc621727fb3d9e2909edd9ec06d35488453c4ac1c87e2e24"
+    },
+    {
+      "file": "src/pipeline.sh",
+      "bytes": 1549,
+      "sha256": "cf03ebbc3581085c48f74bf0e2ebeff067c2e473bb2dcc901cea8b932407ff53"
+    },
+    {
+      "file": "src/transcode.sh",
+      "bytes": 9523,
+      "sha256": "f54b3ddbddc2acd2435c5b4a60a5777880e65c11aebf3ea027c257a373867a39"
+    },
+    {
+      "file": "src/transcode_queue.sh",
+      "bytes": 1959,
+      "sha256": "8955164f29ce8060945c7e06dee3d3da36ae81007cf81b212e94177e98308191"
+    },
+    {
+      "file": "COMPATIBILITY.md",
+      "bytes": 5569,
+      "sha256": "b0d677f178fc0b99b3f40ddbbe5def1fdae5b8cda268fd49e37c76f98e5282b7"
+    },
+    {
+      "file": "FILES.md",
+      "bytes": 7248,
+      "sha256": "2b8f0b94d9542c093755e823417e49da52b8ec3f2ab764b155acadcf547d77e3"
+    },
+    {
+      "file": "README-给Codex.md",
+      "bytes": 9361,
+      "sha256": "2bd24618eb48ec538073986dbff623d2b5e80afaccd809acb6b2b3e8a31eecda"
+    },
+    {
+      "file": "THIRD_PARTY.md",
+      "bytes": 3236,
+      "sha256": "f2b5f0ae05cf111510c6377511e021ec7cd0ff60b032ec9aacf12878bae386f0"
+    },
+    {
+      "file": "USB实现与复现教程.md",
+      "bytes": 5964,
+      "sha256": "65ee9076b32e9828ec5f7f36df2636be4f85f0684aea4460ac33e6f9bded1d78"
+    }
+  ]
+}
