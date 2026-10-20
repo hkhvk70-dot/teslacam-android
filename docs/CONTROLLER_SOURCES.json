@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-20",
+  "scope": "Nine controller modules matched the deployed device after the recovery update. Other repository integration files have separate validation scope.",
+  "files": [
+    {
+      "path": "controller/src/commit.py",
+      "bytes": 4452,
+      "sha256": "6b7bfca61d1a067b6096e34e4d0e3dbd1b3eb4088743d55c6fc88f02e28625cc"
+    },
+    {
+      "path": "controller/src/gate.py",
+      "bytes": 6311,
+      "sha256": "170a85fb1f6baea5c7167156ed2778a4c281f953cf4bc0d913b3cd098680256b"
+    },
+    {
+      "path": "controller/src/lifecycle.py",
+      "bytes": 13821,
+      "sha256": "709cb01143ca3af9ad27b1fb7212c18df06b837e0984051e5ac9202fda729a6d"
+    },
+    {
+      "path": "controller/src/locks.py",
+      "bytes": 6656,
+      "sha256": "a00d74eac2198d8c0e1ff3deb69ea6cdf497d1032b545e81b2d2fb0b46ea6dba"
+    },
+    {
+      "path": "controller/src/proc_identity.py",
+      "bytes": 11040,
+      "sha256": "3935e78a68f9a503d938ab3dd0e6ac926260c63a8a92c89398e050737dca7f33"
+    },
+    {
+      "path": "controller/src/services.py",
+      "bytes": 6982,
+      "sha256": "bf92fd55b2141a84eba9d7e604bc8339b0d9de2f2c90c599396ea479729775f2"
+    },
+    {
+      "path": "controller/src/state_write.py",
+      "bytes": 3161,
+      "sha256": "b16bb7f6d3f081067e824c1fc8549dcfa55273af7148937aeeb2180c5942a25d"
+    },
+    {
+      "path": "controller/src/status_view.py",
+      "bytes": 24685,
+      "sha256": "6d7c45c74afd9fba155e7539954f0d2b3857345762b25ebb693273af2ba79723"
+    },
+    {
+      "path": "controller/src/teslacam.py",
+      "bytes": 25429,
+      "sha256": "b6e2cafa1c79e025032fc3053418a6aab9549e31a4c4feae3e8d03f829eaacb1"
+    }
+  ]
+}

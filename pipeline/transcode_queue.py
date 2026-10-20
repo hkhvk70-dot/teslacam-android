@@ -77,6 +77,11 @@ class Queue:
                 continue
 
     def step(self, index):
+        # Admission guard only; shutdown of an existing job is coordinated by
+        # the controller's service group, not by this marker check alone.
+        state = self.root.parent / "state"
+        if any((state / name).exists() for name in ("stop_requested", "export_forbidden.json")):
+            return {"status": "blocked"}
         candidate = next(self.eligible(index), None)
         if candidate is None:
             return {"status": "idle"}

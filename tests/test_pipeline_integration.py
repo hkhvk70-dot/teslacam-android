@@ -64,6 +64,21 @@ class QueueTests(unittest.TestCase):
         result = self.queue.step({"events": [self.event, newer]})
         self.assertEqual(result["event"], newer["id"])
 
+    def test_control_barriers_prevent_new_encoding_and_indexing(self):
+        state = self.root / "state"
+        # Keep this test's control markers inside its own disposable root.
+        event_root = self.root / "events"
+        queue = QUEUE.Queue(event_root, self.root / "bin", runner=self.runner)
+        state.mkdir()
+        for name in ("stop_requested", "export_forbidden.json"):
+            with self.subTest(name=name):
+                marker = state / name
+                marker.write_text("private test marker")
+                self.assertEqual(queue.step({"events": [self.event]})["status"], "blocked")
+                self.runner.assert_not_called()
+                marker.unlink()
+        self.assertEqual(queue.step({"events": []})["status"], "idle")
+
     def test_growing_and_recently_changed_sources_are_not_encoded(self):
         self.event["status"] = "growing"
         self.assertEqual(self.step()["status"], "idle")

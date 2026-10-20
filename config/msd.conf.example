@@ -11,11 +11,8 @@ CFG=mass_storage,adb
 # 设备上观察到的 USB 控制器为 a600000.dwc3。
 # 当前脚本依赖厂商 HAL 绑定 UDC，尚未实现通用控制器配置项。
 
-# FAT 修复：镜像静默多少分钟后视为安全窗口
-MAINT_IDLE_MIN=45
-
-# FAT 修复的最小间隔（小时）
-MAINT_HOURS=24
+# 维护由 teslacam.sh stop / maintain 显式协调；没有定时自动修复。
+# 录像静默时间、电源状态不能用来证明安全卸载。
 
 # RecentClips 保留多少分钟（真实数据约 11.7 GB/小时，60 分钟 ≈ 12 GB）
 RECENT_KEEP_MIN=60
@@ -26,8 +23,7 @@ KEEP_DAYS=60
 # 剩余空间低于此值时触发清理
 FREE_MIN_GB=15
 
-# 默认只运行按需分段预览；整事件预转码和个人 FRP 服务均显式选择。
-ENABLE_EVENT_QUEUE=0
-ENABLE_FRP=0
+# 是否启用整事件预转码/FRP 改由 services.json 的 enabled 控制。
+# 两项默认关闭，见 services.json.example。
 # 必须与网页服务及历史压缩脚本指向同一个编码锁。
 ENCODE_LOCK=/data/local/tmp/teslacam-encode.lock

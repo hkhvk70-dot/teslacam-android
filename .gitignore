@@ -16,6 +16,14 @@ frps.toml
 msd.conf
 sepolicy.rules
 health.json
+services.json
+auth
+state/
+run/
+_test_temp/
+test-results/
+*.group
+*.lock
 
 # Runtime footage, device images, logs, and personal captures
 events/

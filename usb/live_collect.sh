@@ -11,6 +11,36 @@ PREV=$DATA/.live.prev
 CUR=$DATA/.live.cur
 [ -f "$CONF" ] && . "$CONF"
 
+# ---- 挂载锁：与 collect.sh、维护共用同一把 ----
+MOUNTED=""
+LOOPDEV=""
+
+# ---- 终止时清理自己挂的资源（stop 会 TERM 本进程）----
+cleanup_mount() {
+  [ -n "$MOUNTED" ] && umount "$MNT" 2>/dev/null
+  [ -n "$MOUNTED" ] && umount -l "$MNT" 2>/dev/null
+  [ -n "$LOOPDEV" ] && losetup -d "$LOOPDEV" >/dev/null 2>&1
+}
+trap 'cleanup_mount; exit 143' TERM INT
+FLOCK=${FLOCK:-/data/data/com.termux/files/usr/bin/flock}
+MOUNT_LOCK=${MOUNT_LOCK:-/data/local/tmp/teslacam-mount.lock}
+if [ -z "$TC_MOUNT_LOCKED" ]; then
+  if [ ! -x "$FLOCK" ]; then
+    echo "ERROR: flock missing at $FLOCK" >> "$DATA/collect.log"
+    exit 69
+  fi
+  TC_MOUNT_LOCKED=1 "$FLOCK" -n "$MOUNT_LOCK" -c "TC_MOUNT_LOCKED=1 sh '$0'"
+  rc=$?
+  [ $rc -eq 1 ] && exit 0
+  exit $rc
+fi
+
+# ---- 停止屏障 ----
+if [ -f "$DATA/state/stop_requested" ] || [ -f "$DATA/state/export_forbidden.json" ]; then
+  echo "$(date '+%m-%d %H:%M:%S') blocked by control state (stop/hold), skip live collect" >> "$DATA/collect.log"
+  exit 0
+fi
+
 : > "$ACT"; : > "$CUR"
 [ -f "$IMG" ] || exit 1
 mkdir -p "$EV/TeslaCam/RecentClips" "$MNT" 2>/dev/null
@@ -31,6 +61,7 @@ fi
 L=$(losetup -f -s -o "$OFF" "$IMG" 2>/dev/null)
 case "$L" in /dev/block/loop*) ;; *) exit 1 ;; esac
 mount -t vfat -o ro,utf8 "$L" "$MNT" 2>/dev/null || { losetup -d "$L" >/dev/null 2>&1; exit 1; }
+MOUNTED=1; LOOPDEV="$L"
 
 SRC="$MNT/TeslaCam/RecentClips"
 DST="$EV/TeslaCam/RecentClips"

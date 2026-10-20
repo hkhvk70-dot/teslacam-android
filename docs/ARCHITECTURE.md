@@ -1,5 +1,13 @@
 # 模块与接口
 
+## 控制面（2026-10-20 更新）
+
+统一入口为 `controller/src/teslacam.sh`，安装后所有控制器模块位于同一 bin 目录。完整 start/stop/maintain 等操作持 lifecycle.lock；短 control.lock 保护状态转换，工作锁协调采集与映像检查。操作身份在 state/active_op.json，检查提交状态在 op_inprogress.json，二者分开。
+
+services.json 分别定义服务命令、环境文件、日志与就绪判据。实例令牌/starttime/组与会话快照用于核验；status 输出 alive、ready、unmanaged 和完整性，不修改状态。reassert 同样先过生命周期/当前 boot 守卫，拒绝缺失、旧 boot、未知和未完成记录。
+
+旧维护/恢复脚本仅提示退役。发布 pipeline 不启动网页/FRP/队列，`start` 才负责服务纳管。使用方法见 [USAGE](USAGE.md)。
+
 ## 数据路径
 
 ```text
@@ -20,7 +28,7 @@ Tailscale 私网或用户自行配置的转发 → 接收端浏览器
 
 当前采集层只读挂载映像，按较新片段或跨扫描大小稳定来决定复制，用 `.part` 后重命名发布。该实现没有快照、写入冻结或主机提交协议；网页层不能补足此一致性保证。详见 [限制](COMPATIBILITY.md)。
 
-`pipeline.sh` 每四轮调用一次全量 `collect.sh`，其余调用 `live_collect.sh`；每轮后生成索引并检查服务。15 秒是循环的休眠间隔，实际周期还包括采集与索引耗时，不代表 15 秒端到端直播延迟。
+`pipeline.sh` 每四轮调用一次全量 `collect.sh`，其余调用 `live_collect.sh`，然后生成索引。采集器共享挂载工作锁并检查 stop/hold。15 秒是循环休眠间隔，实际周期还包括采集与索引耗时，不代表 15 秒端到端直播延迟。
 
 ## 索引结构
 
@@ -67,8 +75,8 @@ HTTP 的 `ROOT`、索引的 `OUT` 和压缩的 `EV` 应指向同一个事件根�
 
 ## 可选后台队列
 
-`ENABLE_EVENT_QUEUE=1` 时，由 `transcode_queue.sh` 启动 Python worker。worker 从索引中选择安静的完整/部分事件，优先最新事件；不依赖旧 `.last_request` 文件。失败按当前源版本退避重试，源变化后可重新处理，不永久依赖 `.failed`。
+在 services.json 将 transcode_queue.enabled 设为 true 时，由控制器启动 `transcode_queue.sh` / Python worker。worker 从索引中选择安静的完整/部分事件，优先最新事件；不依赖旧 `.last_request`。失败按当前源版本退避重试，源变化后可重新处理，不永久依赖 `.failed`；stop/hold 时不调度新任务。
 
-worker 只锁自身单实例文件，不重复获取编码锁；实际 FFmpeg 锁由 `transcode.sh` 持有并在每路之间释放。流水线将同一锁路径传给 HTTP 和压缩 worker，避免自锁。后台整事件队列默认关闭，前台 15 秒按需预览继续可用。
+worker 只锁自身单实例文件，不重复获取编码锁；实际 FFmpeg 锁由 `transcode.sh` 持有并在每路之间释放。services.json 为 HTTP 和压缩 worker 配置相同编码锁，避免自锁。后台整事件队列默认关闭，前台 15 秒按需预览继续可用。
 
 流水线与可选队列都可能更新索引。索引、审计和探测缓存使用各自任务独占的临时文件再原子替换，避免同名临时文件相互覆盖。这保证发布 JSON 的完整性，不保证不同任务观察的录像树处于同一时刻。

@@ -1,0 +1,49 @@
+{
+  "_comment": "Example only. Review paths and readiness on your own device. No credentials belong here.",
+  "pipeline": {
+    "enabled": true,
+    "required": true,
+    "cmd": ["/system/bin/sh", "/data/teslacam/bin/pipeline.sh"],
+    "env": {"LD_LIBRARY_PATH": "/data/data/com.termux/files/usr/lib"},
+    "log": "/data/teslacam/pipeline.log",
+    "ready": {"type": "alive", "timeout": 5}
+  },
+  "serve": {
+    "enabled": true,
+    "required": true,
+    "cmd": ["/data/data/com.termux/files/usr/bin/python3", "-B", "/data/teslacam/bin/serve.py"],
+    "cwd": "/data/teslacam/events",
+    "env": {
+      "LD_LIBRARY_PATH": "/data/data/com.termux/files/usr/lib",
+      "ROOT": "/data/teslacam/events",
+      "PORT": "8081",
+      "ENCODE_LOCK": "/data/local/tmp/teslacam-encode.lock"
+    },
+    "env_files": {"TOKEN": "/data/teslacam/token"},
+    "log": "/data/teslacam/serve.log",
+    "ready": {"type": "tcp", "host": "::1", "port": 8081, "timeout": 15}
+  },
+  "msdwatch": {
+    "enabled": true,
+    "required": true,
+    "cmd": ["/system/bin/sh", "/data/teslacam/bin/msdwatch.sh"],
+    "env": {"LD_LIBRARY_PATH": "/data/data/com.termux/files/usr/lib"},
+    "log": "/data/teslacam/msdwatch.out",
+    "ready": {"type": "alive", "timeout": 5}
+  },
+  "transcode_queue": {
+    "enabled": false,
+    "required": false,
+    "cmd": ["/system/bin/sh", "/data/teslacam/bin/transcode_queue.sh"],
+    "env": {"TC_ENCODE_LOCK": "/data/local/tmp/teslacam-encode.lock", "QUIET_MIN": "5"},
+    "log": "/data/teslacam/transcode.log",
+    "ready": {"type": "alive", "timeout": 5}
+  },
+  "frpc": {
+    "enabled": false,
+    "required": false,
+    "cmd": ["/data/teslacam/bin/frpc", "-c", "/data/teslacam/frpc.toml"],
+    "log": "/data/teslacam/frpc.out",
+    "ready": {"type": "alive", "timeout": 5}
+  }
+}

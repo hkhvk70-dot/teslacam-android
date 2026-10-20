@@ -22,6 +22,41 @@ FREE_MIN_GB=${FREE_MIN_GB:-15}
 
 log() { echo "$(date '+%m-%d %H:%M:%S') $*" >> "$LOG"; }
 
+# ---- 挂载锁：整个脚本持有，防止与维护（fsck）并发 ----
+# 用 flock 的 -c 形式：本机 sh 的重定向带 CLOEXEC，exec 8> + flock 8 不成立。
+MOUNTED=""
+LOOPDEV=""
+
+# ---- 终止时清理自己挂的资源（stop 会 TERM 本进程）----
+cleanup_mount() {
+  [ -n "$MOUNTED" ] && umount "$MNT" 2>/dev/null
+  [ -n "$MOUNTED" ] && umount -l "$MNT" 2>/dev/null
+  [ -n "$LOOPDEV" ] && losetup -d "$LOOPDEV" >/dev/null 2>&1
+}
+trap 'cleanup_mount; exit 143' TERM INT
+FLOCK=${FLOCK:-/data/data/com.termux/files/usr/bin/flock}
+MOUNT_LOCK=${MOUNT_LOCK:-/data/local/tmp/teslacam-mount.lock}
+if [ -z "$TC_MOUNT_LOCKED" ]; then
+  if [ ! -x "$FLOCK" ]; then
+    log "ERROR: flock missing at $FLOCK, refusing to run without mount lock"
+    exit 69
+  fi
+  TC_MOUNT_LOCKED=1 "$FLOCK" -n "$MOUNT_LOCK" -c "TC_MOUNT_LOCKED=1 sh '$0'"
+  rc=$?
+  if [ $rc -eq 1 ]; then
+    log "mount lock busy (maintenance or another collector), skip this round"
+    exit 0
+  fi
+  exit $rc
+fi
+
+# ---- 停止屏障：控制面处于停止/失败状态时不做采集 ----
+if [ -f "$DATA/state/stop_requested" ] || [ -f "$DATA/state/export_forbidden.json" ]; then
+  log "blocked by control state (stop/hold), skip collect"
+  exit 0
+fi
+
+
 [ -f "$IMG" ] || { log "img missing: $IMG"; exit 1; }
 mkdir -p "$EV/TeslaCam" "$MNT" 2>/dev/null
 : > "$ACT"
@@ -52,6 +87,7 @@ if ! mount -t vfat -o ro,utf8 "$L" "$MNT" 2>/dev/null; then
   losetup -d "$L" >/dev/null 2>&1
   exit 1
 fi
+MOUNTED=1; LOOPDEV="$L"
 
 copy_kind() {
   kind="$1"
